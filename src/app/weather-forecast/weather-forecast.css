@@ -1,0 +1,67 @@
+ .forecast-container {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .forecast-title {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .forecast-item {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      background: #f8fafc;
+      transition: transform 0.2s;
+    }
+
+    .forecast-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .forecast-date {
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .forecast-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0.5rem 0;
+    }
+
+    .forecast-temps {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .high {
+      font-weight: 700;
+      color: #dc2626;
+    }
+
+    .low {
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .forecast-desc {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }

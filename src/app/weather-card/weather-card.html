@@ -1,0 +1,37 @@
+<div class="weather-card" *ngIf="weather">
+      <div class="weather-header">
+        <h2 class="location">{{ weather.location }}</h2>
+        <div class="main-weather">
+          <img 
+            [src]="getWeatherIconUrl(weather.icon)" 
+            [alt]="weather.description"
+            class="weather-icon"
+          />
+          <span class="temperature">{{ weather.temperature }}°C</span>
+        </div>
+        <p class="description">{{ weather.description | titlecase }}</p>
+      </div>
+      
+      <div class="weather-details">
+        <div class="detail-item">
+          <span class="label">Feels like</span>
+          <span class="value">{{ weather.feelsLike }}°C</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Humidity</span>
+          <span class="value">{{ weather.humidity }}%</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Wind Speed</span>
+          <span class="value">{{ weather.windSpeed }} m/s</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Pressure</span>
+          <span class="value">{{ weather.pressure }} hPa</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Visibility</span>
+          <span class="value">{{ weather.visibility }} km</span>
+        </div>
+      </div>
+    </div>

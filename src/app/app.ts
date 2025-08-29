@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { WeatherDashboardCmp } from './weather-dashboard/weather-dashboard';
+
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  imports: [WeatherDashboardCmp],
+  template: `<app-weather-dashboard></app-weather-dashboard>`,
+  
 })
-export class App {
-  protected readonly title = signal('weather-app');
+export class AppCmp {
+  title = signal('Weather App');
 }

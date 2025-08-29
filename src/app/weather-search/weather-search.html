@@ -1,0 +1,26 @@
+
+<div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Enter city name..."
+          class="search-input"
+        />
+        <button 
+          (click)="onSearch()"
+          [disabled]="!searchQuery().trim()"
+          class="search-button"
+        >
+          Search
+        </button>
+        <button 
+          (click)="getCurrentLocation()"
+          class="location-button"
+          title="Use current location"
+        >
+          📍
+        </button>
+      </div>
+    </div>

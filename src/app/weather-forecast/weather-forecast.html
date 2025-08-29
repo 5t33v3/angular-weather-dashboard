@@ -1,0 +1,21 @@
+ <div class="forecast-container" *ngIf="forecast && forecast.length > 0">
+      <h3 class="forecast-title">5-Day Forecast</h3>
+      <div class="forecast-grid">
+        <div 
+          *ngFor="let day of forecast" 
+          class="forecast-item"
+        >
+          <div class="forecast-date">{{ formatDate(day.date) }}</div>
+          <img 
+            [src]="getWeatherIconUrl(day.icon)" 
+            [alt]="day.description"
+            class="forecast-icon"
+          />
+          <div class="forecast-temps">
+            <span class="high">{{ day.high }}°</span>
+            <span class="low">{{ day.low }}°</span>
+          </div>
+          <div class="forecast-desc">{{ day.description | titlecase }}</div>
+        </div>
+      </div>
+    </div>
