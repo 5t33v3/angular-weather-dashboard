@@ -1,5 +1,5 @@
 # Angular Weather Dashboard ☀️🌧️
-
+![Demo](./demo.gif)
 A clean and responsive weather dashboard built with Angular.
 
 ## Demo
