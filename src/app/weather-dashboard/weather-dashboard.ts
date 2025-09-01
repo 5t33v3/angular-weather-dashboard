@@ -1,10 +1,12 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WeatherService } from '../weather.service';
 import { WeatherCardCmp } from '../weather-card/weather-card';
 import { WeatherSearchCmp } from '../weather-search/weather-search';
 import { WeatherForecastCmp } from '../weather-forecast/weather-forecast';
 import { WeatherData, WeatherForecast } from '../weather.model';
+import { Subject,takeUntil } from 'rxjs';
+
 @Component({
   selector: 'app-weather-dashboard',
   imports: [
@@ -17,19 +19,25 @@ import { WeatherData, WeatherForecast } from '../weather.model';
   styleUrl: './weather-dashboard.css'
 })
 
-export class WeatherDashboardCmp implements OnInit {
+export class WeatherDashboardCmp implements OnInit, OnDestroy {
+
+  private readonly destroy$ = new Subject<void>();
+
   currentWeather = signal<WeatherData | null>(null);
   weatherForecast = signal<WeatherForecast[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
 
-  constructor(private weatherService: WeatherService) {}
+  constructor(private readonly weatherService: WeatherService) {}
 
   ngOnInit(): void {
-    // Subscribe to loading state
-    this.weatherService.loading$.subscribe(loading => {
-      this.isLoading.set(loading);
-    });
+    // Subscribe to loading state and clean up on destroy
+    this.weatherService.loading$.pipe(takeUntil(this.destroy$)).subscribe(loading => this.isLoading.set(loading));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   searchWeatherByCity(city: string): void {
