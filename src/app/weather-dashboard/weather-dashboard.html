@@ -1,39 +1,59 @@
 <div class="dashboard-container">
-      <header class="dashboard-header">
-        <h1 class="dashboard-title">Weather Dashboard</h1>
-        <p class="dashboard-subtitle">Get current weather and forecasts for any city</p>
-      </header>
+  <header class="dashboard-header">
+    <h1 class="dashboard-title">Weather Dashboard</h1>
+    <p class="dashboard-subtitle">Get current weather and forecasts for any city</p>
+  </header>
 
-      <app-weather-search
-        (citySearch)="searchWeatherByCity($event)"
-        (locationSearch)="searchWeatherByLocation($event)"
-      ></app-weather-search>
+  <app-weather-search
+    (citySearch)="searchWeatherByCity($event)"
+    (locationSearch)="searchWeatherByLocation($event)"
+  ></app-weather-search>
 
-      <div class="loading-spinner" *ngIf="isLoading()">
-        <div class="spinner"></div>
-        <p>Loading weather data...</p>
-      </div>
-
-      <div class="error-message" *ngIf="errorMessage()">
-        <div class="error-content">
-          <span class="error-icon">⚠️</span>
-          <p>{{ errorMessage() }}</p>
-          <button (click)="clearError()" class="error-dismiss">Dismiss</button>
-        </div>
-      </div>
-
-      <div class="weather-content" *ngIf="currentWeather() && !isLoading()">
-        <app-weather-card [weather]="currentWeather()"></app-weather-card>
-        
-        <app-weather-forecast 
-          [forecast]="weatherForecast()"
-        ></app-weather-forecast>
-      </div>
-
-      <div class="welcome-message" *ngIf="!currentWeather() && !isLoading() && !errorMessage()">
-        <div class="welcome-content">
-          <h2>Welcome to Weather Dashboard</h2>
-          <p>Search for a city above or use your current location to get started!</p>
-        </div>
-      </div>
+  <!-- Welcome Message -->
+  <div class="welcome-message" *ngIf="!currentWeather() && !isLoading() && !errorMessage()">
+    <div class="welcome-content">
+      <h2>Welcome to Weather Dashboard</h2>
+      <p>Search for a city above or use your current location to get started!</p>
     </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="isLoading()">
+    <div class="spinner"></div>
+    <p>Loading weather data...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage()">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <p>{{ errorMessage() }}</p>
+      <button (click)="clearError()" class="error-dismiss">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- Current Weather & Forecast -->
+  <div class="weather-content" *ngIf="currentWeather() && !isLoading()">
+    <app-weather-card [weather]="currentWeather()"></app-weather-card>
+    
+    <div *ngIf="currentWeather() as weather">
+  <button (click)="toggleFavorite(weather)">
+    {{ isFavorite(weather.location) ? 'Remove from Favorites' : 'Add to Favorites' }}
+  </button>
+</div>
+
+
+    <app-weather-forecast [forecast]="weatherForecast()"></app-weather-forecast>
+  </div>
+
+  <!-- Favorites Section -->
+  <div class="favorites-section" *ngIf="favoriteWeather().length > 0">
+    <h2 class="favorites-title">Favorite Cities</h2>
+    <div class="favorites-grid">
+      <app-weather-card
+        *ngFor="let fav of favoriteWeather()"
+        [weather]="fav">
+      </app-weather-card>
+    </div>
+  </div>
+</div>

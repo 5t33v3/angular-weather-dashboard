@@ -28,16 +28,63 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
 
+  favorites = signal<string[]>([]);
+  favoriteWeather = signal<WeatherData[]>([]);
+
+
   constructor(private readonly weatherService: WeatherService) {}
 
   ngOnInit(): void {
     // Subscribe to loading state and clean up on destroy
     this.weatherService.loading$.pipe(takeUntil(this.destroy$)).subscribe(loading => this.isLoading.set(loading));
+
+    const saved = localStorage.getItem('favorites');
+    if (saved) {
+      this.favorites.set(JSON.parse(saved));
+      this.refreshFavoriteWeather();
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  toggleFavorite(weather: WeatherData): void {
+  const loc = weather.location; // extract location from WeatherData
+  const current = this.favorites();
+
+  if (current.includes(loc)) {
+    this.favorites.set(current.filter(c => c !== loc));
+  } else {
+    this.favorites.set([...current, loc]);
+  }
+
+  localStorage.setItem('favorites', JSON.stringify(this.favorites()));
+  this.refreshFavoriteWeather();
+}
+
+  isFavorite(location: string): boolean {
+    return this.favorites().includes(location);
+  }
+
+   private refreshFavoriteWeather(): void {
+    const cities = this.favorites();
+    const weatherDataList: WeatherData[] = [];
+
+    this.favoriteWeather.set([]); // clear before refreshing
+
+    cities.forEach(city => {
+      this.weatherService.getCurrentWeather(city).subscribe({
+        next: (data) => {
+          weatherDataList.push(data);
+          this.favoriteWeather.set([...weatherDataList]); // update progressively
+        },
+        error: (err) => {
+          console.error(`Failed to refresh weather for ${city}`, err);
+        }
+      });
+    });
   }
 
   searchWeatherByCity(city: string): void {
