@@ -37,7 +37,7 @@
     <app-weather-card [weather]="currentWeather()"></app-weather-card>
     
     <div *ngIf="currentWeather() as weather">
-  <button (click)="toggleFavorite(weather)">
+  <button (click)="toggleFavorite(weather)" class = "favorite-btn">
     {{ isFavorite(weather.location) ? 'Remove from Favorites' : 'Add to Favorites' }}
   </button>
 </div>
