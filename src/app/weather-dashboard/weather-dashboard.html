@@ -10,7 +10,7 @@
   ></app-weather-search>
 
   <!-- Welcome Message -->
-  <div class="welcome-message" *ngIf="!currentWeather() && !isLoading() && !errorMessage()">
+  <div class="welcome-message" *ngIf="!currentWeather() && !isLoading() && !errorMessage() && !hasSearched()">
     <div class="welcome-content">
       <h2>Welcome to Weather Dashboard</h2>
       <p>Search for a city above or use your current location to get started!</p>
@@ -18,7 +18,7 @@
   </div>
 
   <!-- Loading Spinner -->
-  <div class="loading-spinner" *ngIf="isLoading()">
+  <div class="loading-spinner" *ngIf="isLoading() && hasSearched()">
     <div class="spinner"></div>
     <p>Loading weather data...</p>
   </div>
@@ -37,8 +37,10 @@
     <app-weather-card [weather]="currentWeather()"></app-weather-card>
     
     <div *ngIf="currentWeather() as weather">
-  <button (click)="toggleFavorite(weather)" class = "favorite-btn">
-    {{ isFavorite(weather.location) ? 'Remove from Favorites' : 'Add to Favorites' }}
+  <button (click)="toggleFavorite(currentWeather()!)"
+          class="favorite-btn"
+          [ngClass]="{ remove: favorites().includes(currentWeather()!.location) }">
+    {{ favorites().includes(currentWeather()!.location) ? 'Remove from Favorites' : 'Add to Favorites' }}
   </button>
 </div>
 
@@ -48,7 +50,10 @@
 
   <!-- Favorites Section -->
   <div class="favorites-section" *ngIf="favoriteWeather().length > 0">
-    <h2 class="favorites-title">Favorite Cities</h2>
+    <h2 class="favorites-title" style="color:darkblue ; text-align: center;">Favorite Cities</h2>
+    <div *ngIf="favoritesLoading()" class="favorites-loading">
+    Refreshing favorites...
+  </div>
     <div class="favorites-grid">
       <app-weather-card
         *ngFor="let fav of favoriteWeather()"

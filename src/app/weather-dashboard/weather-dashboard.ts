@@ -27,9 +27,11 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
   weatherForecast = signal<WeatherForecast[]>([]);
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
-
+  hasSearched = signal<boolean>(false);
+  favoritesLoading = signal<boolean>(false);
   favorites = signal<string[]>([]);
   favoriteWeather = signal<WeatherData[]>([]);
+
 
 
   constructor(private readonly weatherService: WeatherService) {}
@@ -56,45 +58,71 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
 
   if (current.includes(loc)) {
     this.favorites.set(current.filter(c => c !== loc));
+    this.favoriteWeather.set(this.favoriteWeather().filter(f => f.location !== loc));
   } else {
     this.favorites.set([...current, loc]);
+    this.favoriteWeather.set([...this.favoriteWeather(), weather])
   }
 
   localStorage.setItem('favorites', JSON.stringify(this.favorites()));
-  this.refreshFavoriteWeather();
+  
 }
 
-  isFavorite(location: string): boolean {
-    return this.favorites().includes(location);
+  
+
+ private refreshFavoriteWeather(): void {
+  const cities = this.favorites();
+
+  if (cities.length === 0) {
+    this.favoriteWeather.set([]);
+    this.favoritesLoading.set(false);
+    return;
   }
 
-   private refreshFavoriteWeather(): void {
-    const cities = this.favorites();
-    const weatherDataList: WeatherData[] = [];
+  this.favoritesLoading.set(true);
+  const weatherDataList: WeatherData[] = [];
 
-    this.favoriteWeather.set([]); // clear before refreshing
+  cities.forEach(city => {
+    // Skip already loaded favoriteWeather
+    if (this.favoriteWeather().some(f => f.location === city)) {
+      weatherDataList.push(this.favoriteWeather().find(f => f.location === city)!);
+      if (weatherDataList.length === cities.length) {
+        this.favoriteWeather.set([...weatherDataList]);
+        this.favoritesLoading.set(false);
+      }
+      return;
+    }
 
-    cities.forEach(city => {
-      this.weatherService.getCurrentWeather(city).subscribe({
-        next: (data) => {
-          weatherDataList.push(data);
-          this.favoriteWeather.set([...weatherDataList]); // update progressively
-        },
-        error: (err) => {
-          console.error(`Failed to refresh weather for ${city}`, err);
+    this.weatherService.getCurrentWeather(city).subscribe({
+      next: (data) => {
+        weatherDataList.push(data);
+        if (weatherDataList.length === cities.length) {
+          this.favoriteWeather.set([...weatherDataList]);
+          this.favoritesLoading.set(false);
         }
-      });
+      },
+      error: (err) => {
+        console.error(`Failed to refresh weather for ${city}`, err);
+        if (weatherDataList.length + 1 === cities.length) {
+          this.favoriteWeather.set([...weatherDataList]);
+          this.favoritesLoading.set(false);
+        }
+      }
     });
-  }
+  });
+}
 
   searchWeatherByCity(city: string): void {
+    this.hasSearched.set(true);
     this.clearError();
     
     // Get current weather
+    this.isLoading.set(true);
     this.weatherService.getCurrentWeather(city).subscribe({
       next: (weather) => {
         this.currentWeather.set(weather);
         this.weatherService.updateWeather(weather);
+        this.isLoading.set(false);
         
         // Get forecast
         this.weatherService.getForecast(city).subscribe({
@@ -110,6 +138,7 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
       error: (error) => {
         this.errorMessage.set(`Unable to find weather data for "${city}". Please check the city name and try again.`);
         console.error('Weather error:', error);
+        this.isLoading.set(false);
       }
     });
   }
