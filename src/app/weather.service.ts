@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, catchError, map, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, map, throwError , tap,of} from 'rxjs';
 import { WeatherData, WeatherForecast } from './weather.model';
 import { environment } from '../environments/environment';
 @Injectable({
@@ -9,6 +9,8 @@ import { environment } from '../environments/environment';
 export class WeatherService {
   private readonly apiKey = environment.weatherApiKey; 
   private readonly baseUrl = 'https://api.openweathermap.org/data/2.5';
+  private recentSearches: string[] = [];
+  private storageKey = 'recentCities'
   
   private weatherSubject = new BehaviorSubject<WeatherData | null>(null);
   public weather$ = this.weatherSubject.asObservable();
@@ -16,7 +18,63 @@ export class WeatherService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadFromStorage();
+  }
+
+  getCitySuggestions(query: string): Observable<string[]>{
+   const q = query.trim();
+    if (!q) return of([]);
+
+    // If you don't have an API key, use a quick mock to test UI
+    if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
+      console.warn('WeatherService: no API key — returning mock suggestions');
+      const mock = ['London, GB', 'Los Angeles, US', 'Lisbon, PT', 'Lagos, NG', 'Lima, PE'];
+      return of(mock.filter(c => c.toLowerCase().includes(q.toLowerCase())));
+    }
+
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=5&appid=${this.apiKey}`;
+
+    return this.http.get<any[]>(url).pipe(
+      map(res => (res || []).map(city => `${city.name}, ${city.country}`)),
+      tap(list => console.log('Geo API suggestions ->', list)),
+      catchError(err => {
+        console.error('Geo API error', err);
+        return of([]); // swallow error and return empty list so stream stays alive
+      })
+    );
+
+  }
+
+    addRecentSearch(city: string): void {
+    if (!city) return;
+    // remove duplicates and keep most recent first
+    this.recentSearches = [city, ...this.recentSearches.filter(c => c !== city)].slice(0, 5);
+    this.saveToStorage();
+  }
+
+  getRecentSearches(): string[] {
+    return [...this.recentSearches];
+  }
+
+ 
+
+  private loadFromStorage(): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      this.recentSearches = stored ? JSON.parse(stored) : [];
+    } catch {
+      this.recentSearches = [];
+    }
+  }
+
+  private saveToStorage(): void {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.recentSearches));
+    } catch {
+      // ignore localStorage errors
+    }
+  }
 
   getCurrentWeather(city: string): Observable<WeatherData> {
     this.loadingSubject.next(true);

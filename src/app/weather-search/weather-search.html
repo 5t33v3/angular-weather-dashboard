@@ -1,26 +1,36 @@
-
 <div class="search-container">
-      <div class="search-box">
-        <input 
-          type="text" 
-          [(ngModel)]="searchQuery"
-          (keyup.enter)="onSearch()"
-          placeholder="Enter city name..."
-          class="search-input"
-        />
-        <button 
-          (click)="onSearch()"
-          [disabled]="!searchQuery().trim()"
-          class="search-button"
-        >
-          Search
-        </button>
-        <button 
-          (click)="getCurrentLocation()"
-          class="location-button"
-          title="Use current location"
-        >
-          📍
-        </button>
-      </div>
-    </div>
+  <div class="search-box">
+    <input
+      type="text"
+      [value]="searchQuery()"
+      (input)="onInputChange($event.target.value)"
+      (keyup.enter)="onSearch()"
+      (focus) = "onFocus()"
+      (blur) = "onBlur()"
+      placeholder="Enter city name..."
+      class="search-input"
+    />
+    <button (click)="onSearch()" [disabled]="!searchQuery().trim()" class="search-button">Search</button>
+    <button (click)="getCurrentLocation()" class="location-button" title="Use current location">📍</button>
+  </div>
+
+  @if (isFocused() && suggestions().length > 0) {
+  <ul class="suggestions">
+    @for (city of suggestions(); track city) {
+      <li (click)="onSelectSuggestion(city)">
+        {{ city }}
+      </li>
+    }
+  </ul>
+}
+
+@if (isFocused() && suggestions().length === 0 && recentSearches().length > 0) {
+  <ul class="recent-searches">
+    <li class="header">Recent searches</li>
+    @for (city of recentSearches(); track city) {
+      <li (click)="onSelectSuggestion(city)">{{ city }}</li>
+    }
+  </ul>
+}
+
+</div>

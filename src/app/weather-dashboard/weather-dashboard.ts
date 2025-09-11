@@ -9,6 +9,7 @@ import { Subject,takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-weather-dashboard',
+  standalone : true,
   imports: [
     CommonModule, 
     WeatherCardCmp, 
@@ -16,7 +17,7 @@ import { Subject,takeUntil } from 'rxjs';
     WeatherForecastCmp,
   ],
   templateUrl: './weather-dashboard.html',
-  styleUrl: './weather-dashboard.css'
+  styleUrls: ['./weather-dashboard.css']
 })
 
 export class WeatherDashboardCmp implements OnInit, OnDestroy {
