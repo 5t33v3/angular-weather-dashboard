@@ -6,16 +6,18 @@ import { WeatherSearchCmp } from '../weather-search/weather-search';
 import { WeatherForecastCmp } from '../weather-forecast/weather-forecast';
 import { WeatherData, WeatherForecast } from '../weather.model';
 import { Subject,takeUntil } from 'rxjs';
+import { SettingsCmp } from "../settings-cmp/settings-cmp";
 
 @Component({
   selector: 'app-weather-dashboard',
   standalone : true,
   imports: [
-    CommonModule, 
-    WeatherCardCmp, 
-    WeatherSearchCmp, 
+    CommonModule,
+    WeatherCardCmp,
+    WeatherSearchCmp,
     WeatherForecastCmp,
-  ],
+    SettingsCmp
+],
   templateUrl: './weather-dashboard.html',
   styleUrls: ['./weather-dashboard.css']
 })
@@ -32,6 +34,8 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
   favoritesLoading = signal<boolean>(false);
   favorites = signal<string[]>([]);
   favoriteWeather = signal<WeatherData[]>([]);
+  darkMode = signal(false);
+  unit = signal<'C' | 'F'>('C');
 
 
 
@@ -161,5 +165,16 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
 
   clearError(): void {
     this.errorMessage.set('');
+  }
+
+  onSettingsChange(settings: { darkMode: boolean; unit: 'C'| 'F'}){
+    this.darkMode.set(settings.darkMode);
+    this.unit.set(settings.unit);
+
+    if(settings.darkMode){
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
   }
 }

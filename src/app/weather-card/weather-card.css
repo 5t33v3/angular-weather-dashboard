@@ -1,11 +1,15 @@
 .weather-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #28a4eb 100%);
       color: white;
       border-radius: 1rem;
       padding: 2rem;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       margin-top: 20px;
       margin-bottom: 20px;
+    }
+    .weather-card.dark {
+      background: #2c2c2c;
+      color: #f0f0f0;
     }
 
     .weather-header {

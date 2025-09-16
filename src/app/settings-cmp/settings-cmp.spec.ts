@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WeatherCardCmp } from './weather-card';
+import { SettingsCmp } from './settings-cmp';
 
-describe('WeatherCard', () => {
-  let component: WeatherCardCmp;
-  let fixture: ComponentFixture<WeatherCardCmp>;
+describe('SettingsCmp', () => {
+  let component: SettingsCmp;
+  let fixture: ComponentFixture<SettingsCmp>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WeatherCardCmp]
+      imports: [SettingsCmp]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(WeatherCardCmp);
+    fixture = TestBed.createComponent(SettingsCmp);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

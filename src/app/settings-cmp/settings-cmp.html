@@ -1,0 +1,16 @@
+<form [formGroup] = "settingsForm" class = "settings-form" [ngClass]="{'dark': settingsForm.get('darkMode')?.value}">
+
+    <label class = "switch-label">
+    <input type="checkbox"  formControlName="darkMode" class = "toggle-checkbox"/>
+    <span class = "toggle-slider"></span>
+    Dark Mode
+    </label>
+
+    <label class = "unit-label">
+        Temperature Unit :
+        <select formControlName="unit" class = "unit-select" >
+            <option value="c">Celsius</option>
+            <option value="F">Farenheit</option>
+        </select>
+    </label>
+</form>

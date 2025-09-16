@@ -1,4 +1,4 @@
-<div class="weather-card" *ngIf="weather">
+<div class="weather-card" *ngIf="weather" [ngClass]="{ 'dark': darkMode}">
       <div class="weather-header">
         <h2 class="location">{{ weather.location }}</h2>
         <div class="main-weather">
@@ -7,7 +7,7 @@
             [alt]="weather.description"
             class="weather-icon"
           />
-          <span class="temperature">{{ weather.temperature }}°C</span>
+          <span class="temperature">{{ displayTemp }}°{{ unit }}</span>
         </div>
         <p class="description">{{ weather.description | titlecase }}</p>
       </div>
@@ -15,7 +15,7 @@
       <div class="weather-details">
         <div class="detail-item">
           <span class="label">Feels like</span>
-          <span class="value">{{ weather.feelsLike }}°C</span>
+          <span class="value">{{ displayFeelsLike }}°{{ unit }}</span>
         </div>
         <div class="detail-item">
           <span class="label">Humidity</span>

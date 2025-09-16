@@ -1,4 +1,9 @@
-<div class="dashboard-container">
+<div class="dashboard-container" [ngClass]="{'dark-dashboard' : darkMode()}">
+
+  <app-settings-cmp (settingsChange)="onSettingsChange($event)"></app-settings-cmp>
+
+ 
+ 
   <header class="dashboard-header">
     <h1 class="dashboard-title">Weather Dashboard</h1>
     <p class="dashboard-subtitle">Get current weather and forecasts for any city</p>
@@ -34,7 +39,11 @@
 
   <!-- Current Weather & Forecast -->
   <div class="weather-content" *ngIf="currentWeather() && !isLoading()">
-    <app-weather-card [weather]="currentWeather()"></app-weather-card>
+    <app-weather-card
+     [weather]="currentWeather()" 
+     [unit]="unit()"
+     [darkMode] = "darkMode()"
+    ></app-weather-card>
     
     <div *ngIf="currentWeather() as weather">
   <button (click)="toggleFavorite(currentWeather()!)"
@@ -44,20 +53,27 @@
   </button>
 </div>
 
-
-    <app-weather-forecast [forecast]="weatherForecast()"></app-weather-forecast>
+  
+    <app-weather-forecast 
+    [forecast]="weatherForecast()"
+    [unit] = "unit()"
+    [darkMode] = "darkMode()"
+    ></app-weather-forecast>
   </div>
 
   <!-- Favorites Section -->
   <div class="favorites-section" *ngIf="favoriteWeather().length > 0">
-    <h2 class="favorites-title" style="color:darkblue ; text-align: center;">Favorite Cities</h2>
+    <h2 class="favorites-title" style="color:darkblue ; text-align: center;font-family: Arial, Helvetica, sans-serif;">Favorite Cities</h2>
     <div *ngIf="favoritesLoading()" class="favorites-loading">
     Refreshing favorites...
   </div>
     <div class="favorites-grid">
       <app-weather-card
         *ngFor="let fav of favoriteWeather()"
-        [weather]="fav">
+        [weather]="fav"
+        [unit] = "unit()"
+        [darkMode]  = "darkMode()">
+
       </app-weather-card>
     </div>
   </div>

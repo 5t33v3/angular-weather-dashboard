@@ -1,0 +1,104 @@
+.settings-form{
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    background-color: rgba(81, 81, 81, 0.15);
+    backdrop-filter:blur(8px);
+    color: #2d2d2d;
+    transition: all 0.3s ease;
+    
+    
+    
+}
+
+.settings-form.dark{
+    background-color: rgba(30,30,30,0.8);
+    color: #f0f0f0;
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    font-weight: 500;
+}
+
+.toggle-checkbox{
+    display: none;
+}
+.toggle-slider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+  transition: all 0.3s ease;
+}
+
+.toggle-checkbox:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-checkbox:checked + .toggle-slider {
+  background-color: #4f46e5; /* nice purple for ON state */
+}
+
+/* Dropdown styles */
+.unit-label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  gap: 0.25rem;
+}
+
+.unit-select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #1e1e1e;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.settings-form.dark .unit-select {
+  background-color: #3c3c3c;
+  border: 1px solid #555;
+  color: #f0f0f0;
+}
+
+/* Hover and focus effects */
+.unit-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 4px #4f46e5;
+}
+
+.toggle-slider:hover {
+  opacity: 0.85;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .settings-form {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
