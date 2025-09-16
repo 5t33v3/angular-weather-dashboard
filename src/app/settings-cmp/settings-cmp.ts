@@ -1,6 +1,8 @@
 import { Component,Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgClass, CommonModule } from "../../../node_modules/@angular/common";
+import { PreferencesService,UserSettings } from '../preferences';
+
 @Component({
   selector: 'app-settings-cmp',
   standalone: true,
@@ -15,12 +17,20 @@ export class SettingsCmp {
 
   settingsForm = new FormGroup ({
     darkMode : new FormControl(false),
-    unit: new FormControl<'C' | 'F'>('C')
+    unit: new FormControl<'C' | 'F'>('C',{ nonNullable: true})
   });
 
-  constructor(){
+  constructor(private prefs: PreferencesService){
+    
+    const saved = this.prefs.loadPreferences();
+    this.settingsForm.patchValue(saved, { emitEvent: false});
+
     this.settingsForm.valueChanges.subscribe(values => {
-      this.settingsChange.emit(values as{ darkMode: boolean; unit: 'C' | 'F'});
+      const settings = values as UserSettings;
+      this.prefs.savePreferences(settings);
+      this.settingsChange.emit(settings);
     });
   }
+
+  
 }

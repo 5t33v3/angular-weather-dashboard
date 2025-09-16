@@ -7,6 +7,7 @@ import { WeatherForecastCmp } from '../weather-forecast/weather-forecast';
 import { WeatherData, WeatherForecast } from '../weather.model';
 import { Subject,takeUntil } from 'rxjs';
 import { SettingsCmp } from "../settings-cmp/settings-cmp";
+import { PreferencesService } from '../preferences';
 
 @Component({
   selector: 'app-weather-dashboard',
@@ -39,7 +40,13 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
 
 
 
-  constructor(private readonly weatherService: WeatherService) {}
+  constructor(private readonly weatherService: WeatherService, private prefs: PreferencesService) {
+    const saved = this.prefs.loadPreferences();
+    this.darkMode.set(saved.darkMode);
+    this.unit.set(saved.unit);
+  }
+
+  
 
   ngOnInit(): void {
     // Subscribe to loading state and clean up on destroy
@@ -170,6 +177,8 @@ export class WeatherDashboardCmp implements OnInit, OnDestroy {
   onSettingsChange(settings: { darkMode: boolean; unit: 'C'| 'F'}){
     this.darkMode.set(settings.darkMode);
     this.unit.set(settings.unit);
+
+    this.prefs.savePreferences(settings);
 
     if(settings.darkMode){
       document.body.classList.add('dark-theme');
